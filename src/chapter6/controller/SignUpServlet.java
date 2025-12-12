@@ -20,7 +20,6 @@ import chapter6.service.UserService;
 @WebServlet(urlPatterns = { "/signup" })
 public class SignUpServlet extends HttpServlet {
 
-
    /**
    * ロガーインスタンスの生成
    */
@@ -120,6 +119,7 @@ public class SignUpServlet extends HttpServlet {
 			errorMessages.add("メールアドレスは50文字以下で入力してください");
 		}
 
+		//エラーメッセージが一つでもあればfalseになる
 		if (errorMessages.size() != 0) {
 			return false;
 		}

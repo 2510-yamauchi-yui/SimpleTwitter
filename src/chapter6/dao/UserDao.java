@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
+
 import chapter6.beans.User;
 import chapter6.exception.NoRowsUpdatedRuntimeException;
 import chapter6.exception.SQLRuntimeException;
@@ -42,7 +44,7 @@ public class UserDao {
 		//PreparedStatementオブジェクト。まずはSQLの下地を作る
 		PreparedStatement ps = null;
 		try {
-			//SQL文を作る（文を作っているだけ）
+			//INSERT、SQL文を作る（文を作っているだけ）
 			StringBuilder sql = new StringBuilder();
 			sql.append("INSERT INTO users ( ");
 			sql.append("    account, ");
@@ -65,7 +67,10 @@ public class UserDao {
 			//SQLを実行できるようにする
 			ps = connection.prepareStatement(sql.toString());
 
-			//SQLの動的部分に値をセットする。登録する値がそれぞれ異なるのでバインド変数を利用する。
+			/*
+			 * SQLの動的部分に値をセットする。登録する値がそれぞれ異なるのでバインド変数を利用する。
+			 * ?の部分に入る値
+			 */
 			ps.setString(1, user.getAccount());
 			ps.setString(2, user.getName());
 			ps.setString(3, user.getEmail());
@@ -96,11 +101,13 @@ public class UserDao {
 			ps.setString(2, accountOrEmail);
 			ps.setString(3, password);
 
+			//SQL実行
 			ResultSet rs = ps.executeQuery();
 
 			List<User> users = toUsers(rs);
 			if (users.isEmpty()) {
 				return null;
+			//アカウント重複
 			} else if (2 <= users.size()) {
 				log.log(Level.SEVERE,"ユーザーが重複しています",
 				new IllegalStateException());
@@ -185,19 +192,32 @@ public class UserDao {
 			sql.append("    account = ?, ");
 			sql.append("    name = ?, ");
 			sql.append("    email = ?, ");
-			sql.append("    password = ?, ");
+			//空欄じゃなかったら
+			if (!StringUtils.isBlank(user.getPassword())) {
+				sql.append("    password = ?, ");
+			}
 			sql.append("    description = ?, ");
 			sql.append("    updated_date = CURRENT_TIMESTAMP ");
 			sql.append("WHERE id = ?");
 
 			ps = connection.prepareStatement(sql.toString());
 
+			//？に値をセットする
 			ps.setString(1, user.getAccount());
 			ps.setString(2, user.getName());
 			ps.setString(3, user.getEmail());
-			ps.setString(4, user.getPassword());
-			ps.setString(5, user.getDescription());
-			ps.setInt(6, user.getId());
+			//パスワードが空欄じゃなかったら4(password),5(description), 6(id)
+			if (!StringUtils.isBlank(user.getPassword())) {
+				ps.setString(4, user.getPassword());
+				ps.setString(5, user.getDescription());
+				ps.setInt(6, user.getId());
+			}
+			
+			//パスワードが空欄だったら4(description), 5(id)
+			if (StringUtils.isBlank(user.getPassword())) {
+				ps.setString(4, user.getDescription());
+				ps.setInt(5, user.getId());
+			}
 
 			int count = ps.executeUpdate();
 			if (count == 0) {

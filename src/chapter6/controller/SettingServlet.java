@@ -43,12 +43,17 @@ public class SettingServlet extends HttpServlet {
     	log.info(new Object(){}.getClass().getEnclosingClass().getName() +
     	" : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
+    	//セッションを取得
     	HttpSession session = request.getSession();
+    	//セッションからloginUser属性を取り出す
     	User loginUser = (User) session.getAttribute("loginUser");
 
+    	//UserServiceのselectメソッドを呼び出す
     	User user = new UserService().select(loginUser.getId());
 
+    	//取得したuserをセットする
     	request.setAttribute("user", user);
+    	//setting.jspを表示する
     	request.getRequestDispatcher("setting.jsp").forward(request, response);
     }
 
@@ -59,12 +64,15 @@ public class SettingServlet extends HttpServlet {
     	log.info(new Object(){}.getClass().getEnclosingClass().getName() +
     	" : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
+    	//セッションを取得
     	HttpSession session = request.getSession();
+    	//エラーメッセージのリスト
     	List<String> errorMessages = new ArrayList<String>();
 
     	User user = getUser(request);
     	if (isValid(user, errorMessages)) {
     		try {
+    			//UserServiceのupdateメソッド呼び出し
     			new UserService().update(user);
     		} catch (NoRowsUpdatedRuntimeException e) {
     			log.warning("他の人によって更新されています。最新のデータを表示しました。データを確認してください。");
@@ -72,6 +80,7 @@ public class SettingServlet extends HttpServlet {
     		}
     	}
 
+    	//エラーがあったときエラーメッセージと入力値をセットしてsetting.jspを表示
     	if (errorMessages.size() != 0) {
     		request.setAttribute("errorMessages", errorMessages);
     		request.setAttribute("user", user);
@@ -89,6 +98,7 @@ public class SettingServlet extends HttpServlet {
     	" : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
     	User user = new User();
+    	//文字列のIdをintに変換してセット
     	user.setId(Integer.parseInt(request.getParameter("id")));
     	user.setName(request.getParameter("name"));
     	user.setAccount(request.getParameter("account"));
@@ -96,8 +106,8 @@ public class SettingServlet extends HttpServlet {
     	user.setEmail(request.getParameter("email"));
     	user.setDescription(request.getParameter("description"));
     	return user;
-	}
-
+    }
+	
 	private boolean isValid(User user, List<String> errorMessages) {
 
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
@@ -105,23 +115,22 @@ public class SettingServlet extends HttpServlet {
 
 		String name = user.getName();
 		String account = user.getAccount();
-		String password = user.getPassword();
 		String email = user.getEmail();
 
+		//名前が空欄ではなく、20文字を超えていた時にエラー
 		if (!StringUtils.isEmpty(name) && (20 < name.length())) {
 			errorMessages.add("名前は20文字以下で入力してください");
 		}
 		
+		//アカウント名が空欄だった時にエラー
 		if (StringUtils.isEmpty(account)) {
 			errorMessages.add("アカウント名を入力してください");
+		//アカウント名が20文字を超えていたときにエラー
 		} else if (20 < account.length()) {
 			errorMessages.add("アカウント名は20文字以下で入力してください");
 		}
 		
-		if (StringUtils.isEmpty(password)) {
-			errorMessages.add("パスワードを入力してください");
-		}
-		
+		//メールアドレスが空欄ではなく、50文字を超えていたときにエラー
 		if (!StringUtils.isEmpty(email) && (50 < email.length())) {
 			errorMessages.add("メールアドレスは50文字以下で入力してください");
 		}
