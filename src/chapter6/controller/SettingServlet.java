@@ -113,10 +113,13 @@ public class SettingServlet extends HttpServlet {
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		" : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
+		int id = user.getId();
 		String name = user.getName();
 		String account = user.getAccount();
 		String email = user.getEmail();
 
+		User existingAccount = new UserService().select(account);
+		
 		//名前が空欄ではなく、20文字を超えていた時にエラー
 		if (!StringUtils.isEmpty(name) && (20 < name.length())) {
 			errorMessages.add("名前は20文字以下で入力してください");
@@ -128,6 +131,11 @@ public class SettingServlet extends HttpServlet {
 		//アカウント名が20文字を超えていたときにエラー
 		} else if (20 < account.length()) {
 			errorMessages.add("アカウント名は20文字以下で入力してください");
+		}
+		
+		//アカウントが既に存在していて、更新しようとしているidと一致しない時にエラー
+		if ((existingAccount != null) && existingAccount.getId() != id) {
+			errorMessages.add("既に存在するアカウントです");
 		}
 		
 		//メールアドレスが空欄ではなく、50文字を超えていたときにエラー
