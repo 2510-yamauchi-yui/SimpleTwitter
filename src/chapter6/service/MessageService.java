@@ -31,12 +31,11 @@ public class MessageService {
 	public MessageService() {
 		InitApplication application = InitApplication.getInstance();
 		application.init();
-
 	}
 
 	public void insert(Message message) {
 
-		log.info(new Object(){}.getClass().getEnclosingClass().getName() + 
+		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		" : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
 		Connection connection = null;
@@ -58,7 +57,7 @@ public class MessageService {
 	}
 	public List<UserMessage> select(String userId) {
 
-		log.info(new Object(){}.getClass().getEnclosingClass().getName() + 
+		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		" : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
 		final int LIMIT_NUM = 1000;
@@ -66,7 +65,7 @@ public class MessageService {
 		Connection connection = null;
 		try {
 			connection = getConnection();
-			
+
 			/*
 			 * idをnullで初期化
 			 * ServletからuserIdの値が渡ってきていたら
@@ -82,10 +81,32 @@ public class MessageService {
 			 * idがnull以外だったら、その値に対応するユーザーIDの投稿を取得する
 			 */
 			List<UserMessage> messages = new UserMessageDao().select(connection, id, LIMIT_NUM);
-			
+
 			commit(connection);
-			
+
 			return messages;
+		} catch (RuntimeException e) {
+			rollback(connection);
+			log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+			throw e;
+		} catch (Error e) {
+			rollback(connection);
+			log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+			throw e;
+		} finally {
+			close(connection);
+		}
+	}
+
+	public void delete(int messageId, int userId) {
+		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
+		" : " + new Object(){}.getClass().getEnclosingMethod().getName());
+
+		Connection connection = null;
+		try {
+			connection = getConnection();
+			new MessageDao().delete(connection, messageId, userId);
+			commit(connection);
 		} catch (RuntimeException e) {
 			rollback(connection);
 			log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);

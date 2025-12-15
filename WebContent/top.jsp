@@ -22,7 +22,7 @@
 				<a href="logout">ログアウト</a>
 			</c:if>
 		</div>
-		
+
 		<c:if test="${ not empty loginUser }">
 			<div class="profile">
 				<div class="name"><h2><c:out value="${loginUser.name}" /></h2></div>
@@ -30,7 +30,7 @@
 				<div class="description"><c:out value="${loginUser.description}" /></div>
 			</div>
 		</c:if>
-		
+
 		<c:if test="${ not empty errorMessages }">
 			<div class="errorMessages">
 				<ul>
@@ -52,7 +52,7 @@
 				</form>
 			</c:if>
 		</div>
-		
+
 		<div class="messages">
 			<c:forEach items="${messages}" var="message">
 				<div class="message">
@@ -67,9 +67,25 @@
 					</div>
 					<div class="text"><c:out value="${message.text}" /></div>
 					<div class="date"><fmt:formatDate value="${message.createdDate}" pattern="yyyy/MM/dd HH:mm:ss" /></div>
+
+					<c:if test="${loginUser.id == message.userId}">
+						<div class="edit-delete-area">
+						<!-- メッセージの編集 -->
+						<form action="edit" method="get">
+							<input type="hidden" name="messageId" value="${message.id}">
+							<input type="submit" value="編集">
+						</form>
+						<!-- メッセージの削除 -->
+						<form action="deleteMessage" method="post">
+							<input type="hidden" name="messageId" value="${message.id}">
+							<input type="submit" value="削除">
+						</form>
+						</div>
+					</c:if>
 				</div>
 			</c:forEach>
 		</div>
+
 		<div class="copyright"> Copyright(c)YuiYamauchi</div>
 	</body>
 </html>
