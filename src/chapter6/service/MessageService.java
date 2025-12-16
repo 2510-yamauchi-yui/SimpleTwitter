@@ -144,14 +144,14 @@ public class MessageService {
 		}
 	}
 
-	public void delete(int messageId, int userId) {
+	public void delete(int messageId) {
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		" : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
 		Connection connection = null;
 		try {
 			connection = getConnection();
-			new MessageDao().delete(connection, messageId, userId);
+			new MessageDao().delete(connection, messageId);
 			commit(connection);
 		} catch (RuntimeException e) {
 			rollback(connection);

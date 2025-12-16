@@ -70,16 +70,16 @@
 
 					<c:if test="${loginUser.id == message.userId}">
 						<div class="edit-delete-area">
-						<!-- メッセージの編集 -->
-						<form action="edit" method="get">
-							<input type="hidden" name="messageId" value="${message.id}">
-							<input type="submit" value="編集">
-						</form>
-						<!-- メッセージの削除 -->
-						<form action="deleteMessage" method="post">
-							<input type="hidden" name="messageId" value="${message.id}">
-							<input type="submit" value="削除">
-						</form>
+							<!-- メッセージの編集 -->
+							<form action="edit" method="get">
+								<input type="hidden" name="messageId" value="${message.id}">
+								<input type="submit" value="編集">
+							</form>
+							<!-- メッセージの削除 -->
+							<form action="deleteMessage" method="post">
+								<input type="hidden" name="messageId" value="${message.id}">
+								<input type="submit" value="削除">
+							</form>
 						</div>
 					</c:if>
 				</div>

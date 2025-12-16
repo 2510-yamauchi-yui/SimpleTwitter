@@ -94,19 +94,18 @@ public class MessageDao {
 		}
 	}
 
-	public void delete(Connection connection, int messageId, int userId) {
+	public void delete(Connection connection, int messageId) {
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		" : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
 		PreparedStatement ps = null;
 		try {
 			//削除SQL
-			String sql = "DELETE FROM messages WHERE id = ? AND user_id = ?";
+			String sql = "DELETE FROM messages WHERE id = ?";
 
 			ps = connection.prepareStatement(sql);
 
 			ps.setInt(1, messageId);
-			ps.setInt(2, userId);
 
 			ps.executeUpdate();
 		} catch (SQLException e) {
