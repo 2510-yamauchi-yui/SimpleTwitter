@@ -100,6 +100,7 @@ public class MessageDao {
 
 		PreparedStatement ps = null;
 		try {
+			//削除SQL
 			String sql = "DELETE FROM messages WHERE id = ? AND user_id = ?";
 
 			ps = connection.prepareStatement(sql);
@@ -122,6 +123,7 @@ public class MessageDao {
 
 		PreparedStatement ps = null;
 		try {
+			//参照SQL
 			String sql = "SELECT * FROM messages WHERE id = ?";
 
 			ps = connection.prepareStatement(sql);

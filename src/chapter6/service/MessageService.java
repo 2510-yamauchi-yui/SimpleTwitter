@@ -104,6 +104,7 @@ public class MessageService {
 		Connection connection = null;
 		try {
 			connection = getConnection();
+			//MessageDao呼び出し
 			Message message = new MessageDao().select(connection, messageId);
 			commit(connection);
 
