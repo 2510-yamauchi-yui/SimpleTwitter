@@ -174,6 +174,7 @@ public class UserDao {
 			close(rs);
 		}
 	}
+	
 	public User select(Connection connection, int id) {
 
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() + 
