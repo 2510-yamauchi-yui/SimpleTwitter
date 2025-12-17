@@ -8,7 +8,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import chapter6.logging.InitApplication;
 import chapter6.service.MessageService;
@@ -36,13 +35,12 @@ public class DeleteMessageServlet extends HttpServlet {
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		" : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
-		HttpSession session = request.getSession();
 		//messageIdを受け取る
 		String messageIdStr = request.getParameter("messageId");
 		//文字列としてのmessageidをintに変換
 		int messageId = Integer.parseInt(messageIdStr);
-		
-		//messageIdとuserIdを引数として渡す
+
+		//messageId引数として渡す
 		new MessageService().delete(messageId);
 
 		response.sendRedirect("./");

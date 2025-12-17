@@ -18,7 +18,6 @@ import chapter6.logging.InitApplication;
 
 public class MessageService {
 
-
     /**
     * ロガーインスタンスの生成
     */
