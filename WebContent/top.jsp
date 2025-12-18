@@ -23,6 +23,15 @@
 			</c:if>
 		</div>
 
+		<div class="date">
+			<form action="" method="get">
+				日付：
+				<input type="date" name="start" value="${param.start}">～
+				<input type="date" name="end" value="${param.end}">
+				<input type="submit" value="絞り込み">
+			</form>
+		</div>
+
 		<c:if test="${ not empty loginUser }">
 			<div class="profile">
 				<div class="name"><h2><c:out value="${loginUser.name}" /></h2></div>
@@ -54,7 +63,7 @@
 		</div>
 
 		<div class="messages">
-			<c:forEach items="${messages}" var="message">
+			<c:forEach items="${ messages }" var="message">
 				<div class="message">
 					<div class="account-name">
 						<span class="account">

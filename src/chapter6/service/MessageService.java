@@ -4,6 +4,7 @@ import static chapter6.utils.CloseableUtil.*;
 import static chapter6.utils.DBUtil.*;
 
 import java.sql.Connection;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,7 +56,7 @@ public class MessageService {
 		}
 	}
 
-	public List<UserMessage> select(String userId) {
+	public List<UserMessage> select(String userId, String startStr, String endStr) {
 
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		" : " + new Object(){}.getClass().getEnclosingMethod().getName());
@@ -72,15 +73,29 @@ public class MessageService {
 			 * 整数型に型変換し、idに代入
 			 */
 			Integer id = null;
-			if(!StringUtils.isEmpty(userId)) {
+			if (!StringUtils.isEmpty(userId)) {
 				id = Integer.parseInt(userId);
 			}
+			
+			Timestamp start = null;
+			Timestamp end = null;
+			if (!StringUtils.isEmpty(startStr)) {
+				start = Timestamp.valueOf(startStr + " 00:00:00");
+			}else {
+				start = Timestamp.valueOf("2025-01-01 00:00:00");
+			}
+			
+			if (!StringUtils.isEmpty(endStr)) {
+				end = Timestamp.valueOf(endStr + " 23:59:59");
+			}else {
+				end = new Timestamp(System.currentTimeMillis());
+			}
 			/*
-			 * messageDao.selectに引数としてInteger型のidを追加
-			 * idがnullだったら全件取得する
-			 * idがnull以外だったら、その値に対応するユーザーIDの投稿を取得する
+			 * messageDao.selectに引数としてInteger型のid、日時(start,end)を追加
+			 * idがnullだったら全件取得、idがnull以外だったら、その値に対応するユーザーIDの投稿を取得する
+			 * startとendがnullだったら全件取得、null以外だったら絞り込み
 			 */
-			List<UserMessage> messages = new UserMessageDao().select(connection, id, LIMIT_NUM);
+			List<UserMessage> messages = new UserMessageDao().select(connection, id, LIMIT_NUM, start, end);
 
 			commit(connection);
 
