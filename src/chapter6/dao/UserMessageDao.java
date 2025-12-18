@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -33,9 +32,9 @@ public class UserMessageDao {
 
 	}
 
-	public List<UserMessage> select(Connection connection, Integer id, int num, Timestamp start, Timestamp end) {
+	public List<UserMessage> select(Connection connection, Integer id, int num, String start, String end) {
 
-		log.info(new Object(){}.getClass().getEnclosingClass().getName() + 
+		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		" : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
 		PreparedStatement ps = null;
@@ -51,28 +50,23 @@ public class UserMessageDao {
 			sql.append("FROM messages ");
 			sql.append("INNER JOIN users ");
 			sql.append("ON messages.user_id = users.id ");
+			sql.append("WHERE messages.created_date BETWEEN ? AND ? ");
+
 			//idがnull以外
 			if (id != null) {
-				sql.append("WHERE messages.user_id = ? ");
+				sql.append("AND messages.user_id = ? ");
 			}
-			
-			if ((start != null) || (end != null)) {
-				sql.append("WHERE messages.created_date BETWEEN ? AND ? ");
-			}
-			
+
 			sql.append("ORDER BY created_date DESC limit " + num);
 
 			ps = connection.prepareStatement(sql.toString());
+
+			ps.setString(1, start);
+			ps.setString(2, end);
 			
 			 // messages.user_idにidをセット
 			if (id != null) {
-				ps.setInt(1, id);
-			}
-			
-			//messsages.created_dateにstartとendの日時をセット
-			if ((start != null) || (end != null)) {
-				ps.setTimestamp(1, start);
-				ps.setTimestamp(2, end);
+				ps.setInt(3, id);
 			}
 
 			//結果をセット
@@ -90,7 +84,7 @@ public class UserMessageDao {
 
 	private List<UserMessage> toUserMessages(ResultSet rs) throws SQLException {
 
-		log.info(new Object(){}.getClass().getEnclosingClass().getName() + 
+		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		" : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
 		List<UserMessage> messages = new ArrayList<UserMessage>();

@@ -104,18 +104,16 @@
 					</div>
 				</c:if>
 				<c:forEach items="${comments}" var="comment">
-					<c:if test="${ not empty loginUser }">
+					<div class="comment">
 						<c:if test="${ message.id == comment.messageId }">
-							<div class="comment">
-								<div class="account-name">
-									<span class="account"><c:out value="${comment.account}" /></span>
-									<span class="name"><c:out value="${comment.name}" /></span>
-								</div>
-								<div class="text"><pre><c:out value="${comment.text}" /></pre></div>
-								<div class="date"><fmt:formatDate value="${comment.createdDate}" pattern="yyyy/MM/dd HH:mm:ss" /></div>
+							<div class="account-name">
+								<span class="account"><c:out value="${comment.account}" /></span>
+								<span class="name"><c:out value="${comment.name}" /></span>
 							</div>
+							<div class="text"><pre><c:out value="${comment.text}" /></pre></div>
+							<div class="date"><fmt:formatDate value="${comment.createdDate}" pattern="yyyy/MM/dd HH:mm:ss" /></div>
 						</c:if>
-					</c:if>
+					</div>
 				</c:forEach>
 			</c:forEach>
 		</div>

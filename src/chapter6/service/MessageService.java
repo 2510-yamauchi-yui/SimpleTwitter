@@ -4,7 +4,8 @@ import static chapter6.utils.CloseableUtil.*;
 import static chapter6.utils.DBUtil.*;
 
 import java.sql.Connection;
-import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,7 +57,7 @@ public class MessageService {
 		}
 	}
 
-	public List<UserMessage> select(String userId, String startStr, String endStr) {
+	public List<UserMessage> select(String userId, String start, String end) {
 
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		" : " + new Object(){}.getClass().getEnclosingMethod().getName());
@@ -76,24 +77,27 @@ public class MessageService {
 			if (!StringUtils.isEmpty(userId)) {
 				id = Integer.parseInt(userId);
 			}
-			
-			Timestamp start = null;
-			Timestamp end = null;
-			if (!StringUtils.isEmpty(startStr)) {
-				start = Timestamp.valueOf(startStr + " 00:00:00");
+
+			//開始日が入力されていたらその日にちをセット
+			if (!StringUtils.isEmpty(start)) {
+				start = (start + " 00:00:00");
+			//開始日が空欄だったらデフォルト
 			}else {
-				start = Timestamp.valueOf("2025-01-01 00:00:00");
+				start = ("2025-01-01 00:00:00");
 			}
-			
-			if (!StringUtils.isEmpty(endStr)) {
-				end = Timestamp.valueOf(endStr + " 23:59:59");
+
+			//終了日が入力されていたらその日にちをセット
+			if (!StringUtils.isEmpty(end)) {
+				end = (end + " 23:59:59");
+			//終了日が空欄だったらデフォルトとして今の時間を取得
 			}else {
-				end = new Timestamp(System.currentTimeMillis());
+				SimpleDateFormat sdf = new SimpleDateFormat( "yyyy/MM/dd HH:mm:ss" );
+				end = sdf.format(new Date());
 			}
 			/*
 			 * messageDao.selectに引数としてInteger型のid、日時(start,end)を追加
 			 * idがnullだったら全件取得、idがnull以外だったら、その値に対応するユーザーIDの投稿を取得する
-			 * startとendがnullだったら全件取得、null以外だったら絞り込み
+			 * startとendが空欄だったら全件取得、入力されていれば絞り込み
 			 */
 			List<UserMessage> messages = new UserMessageDao().select(connection, id, LIMIT_NUM, start, end);
 

@@ -20,7 +20,7 @@ import chapter6.service.MessageService;
 
 @WebServlet(urlPatterns = { "/index.jsp" })
 public class TopServlet extends HttpServlet {
-	
+
 	private static final long serialVersionUID = 1L;
 
     /**
@@ -41,7 +41,7 @@ public class TopServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 		throws IOException, ServletException {
 
-		log.info(new Object(){}.getClass().getEnclosingClass().getName() + 
+		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		" : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
 		boolean isShowMessageForm = false;
@@ -55,15 +55,17 @@ public class TopServlet extends HttpServlet {
 		 * MessageServiceのselectに引数としてString型のuser_idを追加
 		 */
 		String userId = request.getParameter("user_id");
-		String startStr = request.getParameter("start");
-		String endStr = request.getParameter("end");
-		List<UserMessage> messages = new MessageService().select(userId, startStr, endStr);
-		
+		String start = request.getParameter("start");
+		String end = request.getParameter("end");
+		List<UserMessage> messages = new MessageService().select(userId, start, end);
+
 		List<UserComment> comments = new CommentService().select();
 
 		request.setAttribute("messages", messages);
 		request.setAttribute("isShowMessageForm", isShowMessageForm);
 		request.setAttribute("comments", comments);
+		request.setAttribute("start", start);
+		request.setAttribute("end", end);
 		request.getRequestDispatcher("/top.jsp").forward(request, response);
 	}
 }
