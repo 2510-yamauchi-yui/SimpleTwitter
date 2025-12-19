@@ -77,7 +77,7 @@ public class MessageService {
 			if (!StringUtils.isEmpty(userId)) {
 				id = Integer.parseInt(userId);
 			}
-
+			
 			//開始日が入力されていたらその日にちをセット
 			if (!StringUtils.isEmpty(start)) {
 				start = (start + " 00:00:00");
